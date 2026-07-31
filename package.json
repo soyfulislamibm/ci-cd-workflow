@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
     "start": "node server.js",
     "test": "jest"
   },
@@ -14,5 +16,8 @@
     "express": "^5.2.1",
     "jest": "^30.4.2",
     "supertest": "^7.2.2"
+  },
+  "devDependencies": {
+    "prettier": "3.9.6"
   }
 }
