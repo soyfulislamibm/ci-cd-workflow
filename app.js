@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => {
-  const message = 'Works on my machine.';
+  let message = 'Works on my machine.';
   res.send(message);
 });
 
