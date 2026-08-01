@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "podman:build": "podman build -t cicd .",
+    "podman:run": "podman run -p 3000:3000 --init --rm cicd",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "lint": "npx eslint .",
