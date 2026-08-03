@@ -7,6 +7,14 @@ terraform {
       version = "~> 6.0"
     }
   }
+
+  backend "s3" {
+    bucket       = "soyful-cicd-terraform-state"
+    key          = "cicd/dev/terraform.tfstate"
+    region       = "eu-west-2"
+    encrypt      = true
+    use_lockfile = true
+  }
 }
 
 provider "aws" {
