@@ -53,3 +53,40 @@ jobs:
           tags: |
             ${{ vars.DOCKERHUB_USERNAME }}/cicd:latest
             ${{ vars.DOCKERHUB_USERNAME }}/cicd:${{ github.sha }}
+
+  deploy-dev:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          EC2_HOST: ${{ vars.EC2_HOST }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/cicd-key
+          chmod 600 ~/.ssh/cicd-key
+          ssh-keyscan -H "$EC2_HOST" >> ~/.ssh/known_hosts
+
+      - name: Deploy application
+        env:
+          EC2_HOST: ${{ vars.EC2_HOST }}
+          EC2_USER: ${{ vars.EC2_USER }}
+          DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          ssh -i ~/.ssh/cicd-key "$EC2_USER@$EC2_HOST" << EOF
+            sudo docker pull "$DOCKERHUB_USERNAME/cicd:$IMAGE_TAG"
+
+            sudo docker stop cicd-app || true
+            sudo docker rm cicd-app || true
+
+            sudo docker run \
+              -d \
+              --restart unless-stopped \
+              --name cicd-app \
+              -p 3000:3000 \
+              "$DOCKERHUB_USERNAME/cicd:$IMAGE_TAG"
+          EOF
