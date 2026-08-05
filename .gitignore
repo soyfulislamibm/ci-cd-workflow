@@ -1,1 +1,16 @@
 node_modules
+# Terraform working directory
+**/.terraform/*
+
+# Terraform state
+*.tfstate
+*.tfstate.*
+
+# Terraform crash logs
+crash.log
+crash.*.log
+
+# Terraform variable files containing secrets
+*.tfvars
+*.tfvars.json
+
