@@ -64,3 +64,18 @@ resource "aws_instance" "app" {
     ManagedBy   = "Terraform"
   }
 }
+
+resource "aws_eip" "app" {
+  domain = "vpc"
+
+  tags = {
+    Name        = "cicd-${var.environment}-eip"
+    Environment = var.environment
+    ManagedBy   = "Terraform"
+  }
+}
+
+resource "aws_eip_association" "app" {
+  instance_id   = aws_instance.app.id
+  allocation_id = aws_eip.app.id
+}
